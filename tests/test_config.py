@@ -30,7 +30,7 @@ def test_config_rejects_non_seatalk_url_without_disclosing_it(monkeypatch):
 
 
 def test_config_repr_hides_webhook(monkeypatch):
-    secret = "https://openapi.seatalk.io/webhook/group/super-secret"
+    secret = "https://openapi.seatalk.io/webhook/group/test"
     monkeypatch.setenv("SEATALK_WEBHOOK_URL", secret)
 
     config = Config.from_env(require_webhook=True)

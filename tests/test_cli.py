@@ -36,7 +36,7 @@ def test_smoke_never_constructs_notifier(monkeypatch, capsys):
 
 def test_test_webhook_never_queries_vca(monkeypatch):
     monkeypatch.setenv(
-        "SEATALK_WEBHOOK_URL", "https://openapi.seatalk.io/webhook/group/test-secret"
+        "SEATALK_WEBHOOK_URL", "https://openapi.seatalk.io/webhook/group/test"
     )
     notifier = Mock()
     monkeypatch.setattr(cli, "build_notifier", lambda config: notifier)
@@ -48,7 +48,7 @@ def test_test_webhook_never_queries_vca(monkeypatch):
 
 def test_run_builds_production_dependencies(monkeypatch):
     monkeypatch.setenv(
-        "SEATALK_WEBHOOK_URL", "https://openapi.seatalk.io/webhook/group/test-secret"
+        "SEATALK_WEBHOOK_URL", "https://openapi.seatalk.io/webhook/group/test"
     )
     client = Mock()
     notifier = Mock()

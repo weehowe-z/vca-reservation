@@ -1,0 +1,23 @@
+[Unit]
+Description=Check VCA Japan jewelry appointment availability
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=vca-reservation
+Group=vca-reservation
+EnvironmentFile=/etc/vca-reservation.env
+ExecStart=/opt/vca-reservation/.venv/bin/vca-reservation run
+StateDirectory=vca-reservation
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+LockPersonality=true
+RestrictSUIDSGID=true
+
+[Install]
+WantedBy=multi-user.target

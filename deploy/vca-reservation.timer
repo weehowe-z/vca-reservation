@@ -1,0 +1,11 @@
+[Unit]
+Description=Run the VCA Japan appointment monitor hourly
+
+[Timer]
+OnCalendar=hourly
+Persistent=true
+AccuracySec=1m
+Unit=vca-reservation.service
+
+[Install]
+WantedBy=timers.target
