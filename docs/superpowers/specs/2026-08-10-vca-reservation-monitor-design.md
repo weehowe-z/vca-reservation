@@ -116,8 +116,10 @@ incoming-webhook text shape:
 }
 ```
 
-`text.at_all` is `true` only for an availability-change message. Initial snapshots, unchanged
-heartbeats, monitor failures, and recovery messages do not mention all group members.
+`text.at_all` is `true` whenever the new successful snapshot differs from the last successful
+snapshot, including a recovery run that also detects an availability change. Initial
+snapshots, unchanged heartbeats, monitor failures, and recovery runs without an availability
+change do not mention all group members.
 
 Messages contain:
 
@@ -163,6 +165,7 @@ Unit tests use recorded, minimal JSON fixtures rather than the live API. They co
 - deterministic sorting;
 - initial, changed, unchanged, failure, and recovery notification decisions;
 - SeaTalk `at_all` behavior for changed versus unchanged snapshots;
+- recovery with an unchanged snapshot versus recovery with a changed snapshot;
 - atomic state persistence;
 - SeaTalk request shape and webhook redaction;
 - invalid configuration and malformed upstream responses.
