@@ -1,0 +1,1 @@
+"""VCA reservation availability monitor."""
