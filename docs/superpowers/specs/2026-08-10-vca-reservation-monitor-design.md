@@ -5,7 +5,8 @@
 Run a small, reliable monitor on a Linux desktop that checks Van Cleef & Arpels Japan
 appointment availability every hour for the six target boutiques in Osaka, Kobe, and
 Hiroshima. Notify one SeaTalk group through its incoming webhook when jewelry-viewing
-availability changes.
+availability status. Every successful hourly check sends a message; changed availability
+mentions all group members.
 
 ## Scope
 
@@ -85,10 +86,13 @@ does not replace the last successful availability snapshot.
 Notification rules:
 
 - First successful run: send the complete current snapshot, including an explicit no-slot
-  message when all boutiques are empty.
-- Later successful runs: send only when the snapshot changed. The message identifies added
-  and removed slots and includes the complete current availability.
-- Unchanged successful run: log success but do not call SeaTalk.
+  message when all boutiques are empty. This establishes the comparison baseline and does not
+  mention all group members.
+- Later successful run with a changed snapshot: identify added and removed slots, include the
+  complete current availability, and mention all group members.
+- Later successful run with an unchanged snapshot: send a heartbeat message that explicitly
+  says there was no change and includes the complete current availability, without mentioning
+  all group members.
 - Third consecutive failed run: send one failure notification.
 - Further failures: do not repeat the same failure notification.
 - First success after an alerted failure: send one recovery notification, then resume normal
@@ -106,14 +110,19 @@ incoming-webhook text shape:
 {
   "tag": "text",
   "text": {
-    "content": "..."
+    "content": "...",
+    "at_all": false
   }
 }
 ```
 
+`text.at_all` is `true` only for an availability-change message. Initial snapshots, unchanged
+heartbeats, monitor failures, and recovery messages do not mention all group members.
+
 Messages contain:
 
-- event type: initial snapshot, availability changed, monitor failure, or recovery;
+- event type: initial snapshot, unchanged heartbeat, availability changed, monitor failure,
+  or recovery;
 - check time in Japan Standard Time;
 - boutique, date, and available time list;
 - the official appointment-page URL.
@@ -153,6 +162,7 @@ Unit tests use recorded, minimal JSON fixtures rather than the live API. They co
 - blocked, web-blocked, and full time slots;
 - deterministic sorting;
 - initial, changed, unchanged, failure, and recovery notification decisions;
+- SeaTalk `at_all` behavior for changed versus unchanged snapshots;
 - atomic state persistence;
 - SeaTalk request shape and webhook redaction;
 - invalid configuration and malformed upstream responses.
@@ -165,8 +175,9 @@ explicit command sends a SeaTalk test message. Tests never access the network.
 - A manual real-data check reports the six boutiques and matches the official appointment
   page for jewelry availability.
 - A SeaTalk test message succeeds without using the event-callback signing secret.
-- The first production run sends one snapshot; a second unchanged run sends nothing.
-- A fixture-driven availability change sends exactly one change notification.
+- The first production run sends one snapshot; every later unchanged run sends one heartbeat.
+- A fixture-driven availability change sends exactly one change notification with
+  `text.at_all=true`.
 - Three consecutive fixture-driven failures send exactly one failure notification, followed
   by one recovery notification after success.
 - `pytest` and static checks pass.
