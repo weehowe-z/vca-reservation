@@ -34,7 +34,7 @@ def test_service_uses_dedicated_user_state_directory_and_hardening():
 
 
 def test_scripts_are_executable_and_valid_bash():
-    for relative in ("scripts/install.sh", "scripts/uninstall.sh"):
+    for relative in ("scripts/install.sh", "scripts/uninstall.sh", "scripts/build-fc-package.sh"):
         path = ROOT / relative
         assert os.access(path, os.X_OK)
         subprocess.run(["bash", "-n", path], check=True)

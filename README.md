@@ -15,6 +15,11 @@
 - 神户：大丸神户店、神户阪急店
 - 广岛：福屋八丁堀本店
 
+## 部署方式
+
+- **Linux systemd**：见下方「Linux 安装」，适合已有服务器
+- **阿里云函数计算（免服务器，≈¥0-1/月）**：见 [docs/fc-deploy.md](docs/fc-deploy.md)
+
 ## Linux 安装
 
 需要 Python 3.11+、`systemd` 和 root 权限。先取得本仓库并进入目录，然后创建只由
